@@ -1,8 +1,10 @@
+
+const { DataTypes } = require('sequelize');
 module.exports = (sequelize) => {
     // defino el modelo
     sequelize.define('Order', {  
       id:{
-        type: DataTypes.UUID,
+        type:DataTypes.UUID,
         
         primaryKey: true,
         allowNull: false,
