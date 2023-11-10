@@ -25,10 +25,14 @@ const loginCtrl = async (req, res) =>{
         const tokenSession = await tokenSign(user);
 
         if(checkPassword){
-            res.send({
-                data:user,
-                tokenSession
-            })
+            // Obtiene el rol del usuario desde el objeto 'user' y lo incluye en la respuesta
+      const { id, username, email, role } = user;
+     // const tokenSession = await tokenSign(user);
+    res.status(200)
+      res.send({
+        data: user,
+        tokenSession
+      });
             return
         }
 

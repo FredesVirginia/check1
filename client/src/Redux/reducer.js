@@ -56,6 +56,14 @@ export default function reducer( state = initialState, action){
             }
         }
 
+        case  "USER_SESSION" : {
+            console.log("EL user en el reducer es " , action.payload);
+            return {
+                ...state,
+                user : action.payload
+            }
+        }
+
     
 
       default : 

@@ -18,18 +18,27 @@ export  function registerUser (user){
     }
 }
 
+export function userSession (user){
+  return {
+    type: "USER_SESSION",
+    payload : user
+  }
+
+}
+
 
 
 export function loginUser(user) {
     return async function (dispatch) {
       try {
         const userR = await axios.post(`http://localhost:3001/auth/login`, user);
-        console.log("EL user es " , userR);
+       
         if (userR.status === 200) {
-            console.log("El user es " , userR);
+            console.log("El user es actions " , userR.data.data);
           const token = userR.data.tokenSession;
           dispatch(setToken(token));
           dispatch(setRole(userR.data.data.role));
+          dispatch(userSession(userR.data.data));
           return dispatch({
             type: "LOGIN_USER",
             payload: true,
@@ -91,6 +100,38 @@ export function getAllProducts(product){
       }
   }
 } 
+
+
+export function createVideogame(game){
+  return async function (dispatch){
+      try{
+          const newGame = await axios.post(`videogames`,game);
+          console.log("Desde action. Videogame creado es " , newGame);
+          return dispatch({
+              type: "CREATE_VIDEOGAME"
+          })
+      }catch(error){
+          console.log("Informe de errores de action Post game" , error);
+      }
+  }
+}
+
+export function createOrder(order , idUser){
+  return async function (dispatch) {
+    try{
+      const newOrder = await axios.post(`http://localhost:3001/users/newOrder` , {order , idUser} );
+      console.log ("Resultado del backdesde atction " , newOrder.data);
+      return dispatch ({
+        type : "CREATE_ORDER"
+      })
+
+      
+    }catch(error){
+     console.log("Informa de error desde action createOrder");
+    }
+  }
+}
+
 
 
 

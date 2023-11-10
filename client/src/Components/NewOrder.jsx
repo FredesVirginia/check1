@@ -1,131 +1,152 @@
-import React    from 'react';
-import { useState , useEffect} from "react";
-import { useDispatch, useSelector } from 'react-redux';
-import {  Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { getAllProducts , createOrder } from '../Redux/actions'; // Asegúrate de importar la acción adecuada
+import {MdOutlineProductionQuantityLimits} from "react-icons/md";
+import {Link} from "react-router-dom";
 
-import { getAllProducts} from "../Redux/actions";
 
 
-    const FormVideogame = () => {
-         const allOrders= useSelector(state=>state.products);   
-       
-         console.log("todos los generes son " , allOrders);
-         
-         const [selectedOptions, setSelectedOptions] = useState([]);
-         const [selectedOrders, setSelectedOrders] = useState([]);
-        const dispatch = useDispatch();
-         const [dataForm , setDataForm] = useState({
-              order: ""
-              
-         });
 
-      
+const NewOrder = () => {
+  const allProducts = useSelector((state) => state.products);
+  const user = useSelector((state) => state.user);
+  console.log("El user es newOrder   " , user);
+  const dispatch = useDispatch();
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [quantity, setQuantity] = useState('');
+  const [orders, setOrders] = useState([]);
+  let listNameOrder = "";
+  let total = 0;
 
-         const setDataHandler = (e) => {
-            const { id,  value } = e.target;
-           
-            setDataForm((prevState) => ({
-              ...prevState,
-              [id]: value,
-            }));
-          };
+  useEffect(() => {
+    dispatch(getAllProducts());
+  }, [dispatch]);
 
-          const handleSelectChange1 = (event) => {
-            const options = Array.from(event.target.selectedOptions).map((option) => option.value);
-            options.forEach((option) => {
-              if (!selectedOptions.find((o) => o.name === option)) {
-                setSelectedOptions([...selectedOptions, { name: option, isChecked: true }]);
-                  }
-                });
+ 
+  useEffect(() => {
+   listNameOrder =  orders.map(order => order.productName).join( " , " );
+   
+  }, [orders]);
 
-            
-              };
+ 
 
-          const handleCheckboxChange1 = (event, option) => {
-            const isChecked = event.target.checked;
-            setSelectedOptions(
-              selectedOptions.map((o) => (o.name === option ? { ...o, isChecked } : o))
-                );
-              };
+  const handleSelectChange = (event) => {
+    const selectedProductName = event.target.value;
+    const selectedProduct = allProducts.find((product) => product.name === selectedProductName);
+    setSelectedProduct(selectedProduct);
+  };
 
-          const handleSelectChange2 = (event) => {
-                const options = Array.from(event.target.options).map((option) => option.value);
-                options.forEach((option) => {
-                  if (!selectedOrders.find((o) => o.name === option)) {
-                    setSelectedOrders([...selectedOrders, { name: option, isChecked: true }]);
-                      }
-                    });
+  const handleQuantityChange = (event) => {
+    setQuantity(event.target.value);
+  };
 
-                    
-              };
+  const addOrder = (event) => {
+    event.preventDefault();
 
-          const handleCheckboxChange2 = (event, option) => {
-                const isChecked = event.target.checked;
-                setSelectedOrders(
-                  selectedOrders.map((o) => (o.name === option ? { ...o, isChecked } : o))
-                    );
-             };
-
-          
-          const handleSaveClick = (e) => {
-            
-
-            const selectOrderss = selectedOrders
-              .filter((option) => option.isChecked)
-              .map((option) => option.name);
-              const ordersString = selectOrderss.join(", ");
-           
-              setDataForm({
-                  ...dataForm,
-                  orders: ordersString,
-                 
-                 });
-
-                 
-            };
-                  
-         
-                
-
-          const onSubmit= (e)=>{
-            e.preventDefault();
-           
-          }
-
-          useEffect(() => {
-            dispatch(getAllProducts());
-           
-          }, [dispatch]);
-
-       
-
-        return (
-            <div className='py-16  m-auto mt-10 w-[400px] h-[490px] bg-white flex justify-center content-center rounded-lg'>
-      <div>
-         <h1 className='text-2xl font-bold text-center'>New Order</h1>
-        <h2 className='text-center m-[20px]'> Login</h2>
-        <form className="grid gap-8" onSubmit={onSubmit}>
-      
-          <input className = "border-b-gray-300 border-b" type="email" placeholder="Email"
-
-            id= "email"
-            onChange={setDataHandler}
-            value = {user.email}
-          />
-          <input className = "border-b-gray-300 border-b" type="password" placeholder="password" 
-          id="password"
-            onChange={setDataHandler}
-            value = {user.password}
-          />
-            
-          <button className='bg-indigo-400 p-2 font-bold text-white hover:bg-indigo-800 transition'> Sign Up</button>
-        </form>
-        <p className='text-center my-4'>You do have an Account?
-        <Link to="/" className=" ml-[5px] text-blue-800 underline">Register</Link>
-        </p>
-      </div>
-    </div>
-        );
+    if (!selectedProduct || quantity <= 0) {
+      // Validación básica para asegurarse de que el producto y la cantidad sean válidos
+      return;
     }
 
-export default FormVideogame;
+    const newOrder = {
+      productName: selectedProduct.name,
+      quantity: parseInt(quantity, 10),
+      totalPrice: (selectedProduct.price * parseInt(quantity, 10)).toFixed(2),
+    };
+
+    setOrders([...orders, newOrder]);
+  
+    // Limpia los campos después de agregar un pedido
+    setSelectedProduct(null);
+    setQuantity('');
+  };
+
+  const handleSubmit = (e) => {
+   
+    let dataForm = {
+      products : listNameOrder,
+      totalOrder : total
+    }
+
+    console.log("EL forma para el back es " , dataForm);
+    console.log("El id del user desde newOrden front es " , user._id);
+    dispatch(createOrder(dataForm , user._id))
+  }
+  
+
+   const calculateTotal = () => {
+   total = orders.reduce((acc, order) => acc + parseFloat(order.totalPrice), 0).toFixed(2);
+    return total;
+};
+
+  
+
+  return (
+    <div className="py-16 pb-10 m-auto mt-10 mb-10 w-[400px] bg-white flex justify-center content-center rounded-lg">
+      <div >
+        <h1 className="text-2xl font-bold text-center">New Order</h1>
+
+        <form className="grid gap-8" onSubmit={addOrder}>
+          <label className="font-bold text-center">Products</label>
+
+          <select  className="border-gray-800 border-solid" id="my-select1" onChange={handleSelectChange} value={selectedProduct?.name || ''}>
+            <option>Selecciona una Opcion</option>
+            {allProducts.length > 0 ? (
+              allProducts.map((t) => (
+                <option key={t.id} value={t.name}>
+                  {t.name} _ ${t.price}
+                </option>
+              ))
+            ) : (
+              <option>Cargando</option>
+            )}
+          </select>
+
+          <Link to="/home" className= " text-bold text-center underline text-sky-600"> Volver </Link>
+
+          {selectedProduct && (
+            <div className="w-[360px] space-y-1">
+              <label className="font-bold"> Nombre del Producto  </label>
+              <input type="text" value={selectedProduct.name} readOnly />
+
+              <label className="font-bold">Cantidad</label>
+              <input
+                type="number"
+                value={quantity}
+                onChange={handleQuantityChange}
+                placeholder="  Ingrese la cantidad"
+                required
+              />
+                 
+              <button   type="submit" className="mt-4 bg-indigo-600 p-2 font-bold text-white hover-bg-indigo-800 transition">
+                Confirmar Pedido
+              </button>
+            </div>
+          )}
+        </form>
+
+        {orders.length > 0 && (
+          <div>
+            <h2 className="text-lg font-bold mt-4"> Pedidos Realizados </h2>
+            <ul>
+              {orders.map((order, index) => (
+                <li key={index}>
+                  {order.productName} -  Cantidad = {order.quantity} - Total = ${order.totalPrice}
+                </li>
+              ))}
+            </ul>
+              <p className="font-bold mt-2">Total de la Compra: ${calculateTotal()}</p>
+            <button  onClick={handleSubmit} type="submit" className=" w-[380px] mt-4 bg-indigo-800 p-2 font-bold text-white hover-bg-indigo-800 transition">
+                Finalizar Compra
+              </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default NewOrder;
+
+
+

@@ -24,7 +24,7 @@ export default function Nav() {
                <h1 className="text-2xl font-bold">  Beach Store</h1>
             </div>
          
-         <Link className=" font-bold  hover: border-b-black"> Create new Order</Link>
+         <Link to="/newOrder" className=" font-bold  hover: border-b-black"> Create new Order</Link>
          </div>)
       }
     </nav>
