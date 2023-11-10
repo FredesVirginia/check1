@@ -51,10 +51,32 @@ const router = express();
           res.json({message : "Pedido Exitoso!"});
         } catch (error) {
           console.error(error);
-          res.status(500).json({ error: "Internal Server Error" });
+          res.status(500).json({ error: "Ocurrio un Error" });
         }
       });
       
+
+      router.delete("/deleteOrder" , async (req, res )=>{
+        try{
+          const {idOrder,  idUser} = req.body;
+          console.log("Los id son " , idOrder ,idUser);
+          const user = await User.findOne({ where: { _id: idUser } });
+
+          const order = await Order.findOne({ where : {id : idOrder} })
+
+           await user.removeOrder(order);
+           const allUsers = await getAllUsers();
+            console.log("Los user son" , allUsers );
+            res.status(200).json(allUsers);
+
+
+          
+        }catch(error){
+        console.log("El error desde el back en delete" , error);
+
+        }
+      }
+      )
       
      
 

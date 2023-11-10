@@ -15,6 +15,12 @@ const initialState = {
 export default function reducer( state = initialState, action){
    switch(action.type){
 
+      case "GET_ALL_USERS":
+          return {
+              ...state,  
+              users : action.payload
+          } 
+
       case "LOGIN_USER":
           return {
               ...state,  
@@ -61,6 +67,20 @@ export default function reducer( state = initialState, action){
             return {
                 ...state,
                 user : action.payload
+            }
+        }
+
+        case "DELETE_ORDER_USER" : {
+            return {
+                ...state ,
+                orders : action.payload
+            }
+        }
+
+        case "GET_ORDER_BY_USER" : {
+            return {
+                ...state ,
+                ordersUser : action.payload
             }
         }
 

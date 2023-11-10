@@ -3,8 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { getAllProducts , createOrder } from '../Redux/actions'; // Asegúrate de importar la acción adecuada
 import {MdOutlineProductionQuantityLimits} from "react-icons/md";
 import {Link} from "react-router-dom";
-
-
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 
 const NewOrder = () => {
@@ -12,6 +12,7 @@ const NewOrder = () => {
   const user = useSelector((state) => state.user);
   console.log("El user es newOrder   " , user);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [quantity, setQuantity] = useState('');
   const [orders, setOrders] = useState([]);
@@ -61,17 +62,39 @@ const NewOrder = () => {
     setQuantity('');
   };
 
-  const handleSubmit = (e) => {
-   
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     let dataForm = {
       products : listNameOrder,
       totalOrder : total
-    }
+    } ;
+     
 
     console.log("EL forma para el back es " , dataForm);
     console.log("El id del user desde newOrden front es " , user._id);
-    dispatch(createOrder(dataForm , user._id))
-  }
+    const result = await dispatch(createOrder(dataForm , user._id));
+   
+    if(result.payload){
+      Swal.fire({
+        title: 'Se creó exitosamente',
+        confirmButtonColor: "#34a57f",
+        timer: 2000,  
+        timerProgressBar: true,  
+        didOpen: () => {
+          Swal.showLoading();  
+        },
+        willClose: () => {
+          
+          navigate("/home");
+        }
+      })
+       } else{
+        Swal.fire({
+          title: 'Ocurrio un Error, Intentalo de Nuevo',
+          confirmButtonColor: "#ff5733"}) 
+       }
+    }
+     
   
 
    const calculateTotal = () => {

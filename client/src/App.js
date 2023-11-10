@@ -5,6 +5,7 @@ import Register from "./Components/Register";
 import Home from "./Components/Home";
 import AddProduct from "./Components/AddProduct";
 import NewOrder from "./Components/NewOrder";
+import OrderUserContainer from './Components/OrderUserContainer';
 import { BrowserRouter, Route , Routes} from 'react-router-dom';
 
 const App = () => {
@@ -18,6 +19,7 @@ const App = () => {
           <Route exact path='/home' element={<Home />} />
           <Route exact path='/addProduct' element={<AddProduct />} />
            <Route exact path='/newOrder' element={<NewOrder />} />
+           <Route exact path='/allUser' element={<OrderUserContainer />} />
         </Routes>
       </BrowserRouter>
     </div>

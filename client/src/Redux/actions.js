@@ -51,6 +51,60 @@ export function loginUser(user) {
   }
   
 
+  export function getAllUser (){
+    return async function (dispatch){
+
+      try{
+        const response = await axios.get(`http://localhost:3001/users`);
+        if(response.status === 200){
+          return dispatch({
+             type : "GET_ALL_USERS",
+             payload : response.data
+          })
+        }
+      }catch(error){
+        console.log("Error en actio get allUser" , error);
+      }
+    }
+  }
+
+  export function deleteOrderUser (idUser , idOrder){
+    return async function (dispatch){
+      try{
+        console.log("EL ID EN DELETE ACTION ES " , idUser, idOrder)
+        const allOrder = await axios.delete("http://localhost:3001/users/deleteOrder", {
+          data: {
+            idUser: idUser,
+            idOrder: idOrder
+          }
+        });
+        
+        console.log("La respuesta del Back es " , allOrder.status);
+          return dispatch({
+            type : "DELETE_ORDER_USER",
+            payload : allOrder.data
+          })
+      
+      }catch(error){
+        console.log("El error fue en deleteOrder " , error);
+      }
+    }
+  }
+
+  export function getOrderByUser (idUser){
+    return async function (dispatch){
+      console.log("POR EL ACTION DE ACTION getOrderByUser");
+       const response = await axios.get(`http://localhost:3001/orders/allOrderByUser/${idUser}`);
+        console.log("respues ta " , response.data)
+       return dispatch({
+          type:"GET_ORDER_BY_USER",
+          payload : response.data
+        })
+   
+      }
+
+  }
+
  export function addNewProduct(product){
     return async function (dispatch){
         try{
@@ -120,14 +174,24 @@ export function createOrder(order , idUser){
   return async function (dispatch) {
     try{
       const newOrder = await axios.post(`http://localhost:3001/users/newOrder` , {order , idUser} );
-      console.log ("Resultado del backdesde atction " , newOrder.data);
-      return dispatch ({
-        type : "CREATE_ORDER"
+      console.log ("Resultado atction createOrder " , newOrder.data.message);
+      if(newOrder.status === 200){
+          return dispatch ({
+        type : "CREATE_ORDER",
+        payload :  true
       })
+      }
+      
 
       
     }catch(error){
-     console.log("Informa de error desde action createOrder");
+       console.log("Informa de error desde action createOrder" , error);
+      return ({
+        
+        payload :  false
+      })
+    
+    
     }
   }
 }

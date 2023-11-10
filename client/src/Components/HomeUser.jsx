@@ -1,9 +1,10 @@
 import React from 'react'
-
+import OrderUserContainer from "./OrderUserContainer";
 export default function HomeUser() {
   return (
     <div>
-      <h1>Home User</h1>
+     
+      <OrderUserContainer />
     </div>
   )
 }

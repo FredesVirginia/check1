@@ -6,7 +6,7 @@
  const router = Router();
 
  router.use('/users' , userRoute);
-// router.use('/orders', orderRoute);
+router.use('/orders', orderRoute);
 router.use('/auth' , authRoute  );
 router.use('/products' , productRoute);
 
