@@ -4,7 +4,7 @@ const {Sequelize} = require("sequelize");
 const checkAuth = require("../middleware/auth");
 const checkRoleAuth = require("../middleware/roleAuth");
 const express = require ("express");
-const {getAllUsers} = require ("../helpers/utils.js");
+const {getAllUsers ,  getAllOrderUser}= require ("../helpers/utils.js");
 const router = express();
 
 
@@ -56,7 +56,7 @@ const router = express();
       });
       
 
-      router.delete("/deleteOrder" , async (req, res )=>{
+      router.delete("/deleteOrder" ,  async (req, res )=>{
         try{
           const {idOrder,  idUser} = req.body;
           console.log("Los id son " , idOrder ,idUser);
@@ -65,7 +65,7 @@ const router = express();
           const order = await Order.findOne({ where : {id : idOrder} })
 
            await user.removeOrder(order);
-           const allUsers = await getAllUsers();
+           const allUsers = await  getAllOrderUser(idUser)
             console.log("Los user son" , allUsers );
             res.status(200).json(allUsers);
 

@@ -6,7 +6,7 @@ const initialState = {
    user:{},
    users:[],
    orders:[], 
-   ordersUser:[],
+   ordersUser:{},
    products: [],
    token:"",
    role: ""
@@ -73,11 +73,12 @@ export default function reducer( state = initialState, action){
         case "DELETE_ORDER_USER" : {
             return {
                 ...state ,
-                orders : action.payload
+                ordersUser : action.payload
             }
         }
 
         case "GET_ORDER_BY_USER" : {
+            console.log("El user en order es  REDUCER" , action.payload)
             return {
                 ...state ,
                 ordersUser : action.payload

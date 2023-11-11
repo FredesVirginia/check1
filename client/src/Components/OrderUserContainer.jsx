@@ -5,42 +5,56 @@ import {getAllUser , getOrderByUser} from "../Redux/actions";
 import OrderUser from "./OrderUser";
 
 export default function OrderUserContainer() {
-    const allUser = useSelector((state)=> state.users);
-    const allOrderUser = useSelector((state) => state.ordersUser);
-    const user = useSelector((state) => state.user);
-    console.log("El user es " , user);
-    console.log("Los user son " , allOrderUser.orders);
-    const dispatch= useDispatch();
+  const allUser = useSelector((state) => state.users);
+  const allOrderUser = useSelector((state) => state.ordersUser);
+  const user = useSelector((state) => state.user);
+  console.log("El user es ", user);
+  console.log("Los user son ", allOrderUser);
+  const dispatch = useDispatch();
 
-    useEffect(() => {
-        dispatch(getOrderByUser(user._id));
-    }, [dispatch , user._id]);
+  let name = "";
+  let array =[];
+  if(user && user.name ){
+      name = user.name
+     
+  }
+if( allOrderUser && allOrderUser.orders){
+  
+    array = allOrderUser.orders
+    console.log("El array es " , array);
+}
+
+   
+
+  
+  useEffect(() => {
+    try {
+      dispatch(getOrderByUser(user._id));
+    } catch (error) {
+      console.error("Error al obtener órdenes del usuario:", error);
+    }
+  }, [dispatch, user._id]);
 
   return (
-   
-    <div className=" mx-auto bg-orange-600 w-3/4  ">
+    <div className=" mt-4 mx-auto w-3/4 grid gap-4 place-items-center py-4   grid-cols-1 lg:grid-cols-3 ">
    
     {allOrderUser ? (
-      allOrderUser.map((user, index) => {
-        return (
-          <div key={user.id}  className="grid gap-4 place-items-center py-4   grid-cols-1 lg:grid-cols-3 ">
-           
-            {user.orders.map((order, orderIndex) => (
-              <OrderUser
+      allOrderUser.orders.map((order, orderIndex) => {
+           return (
+            <OrderUser
                 key={orderIndex}
-                id= {user.id}
+                id= {user._id}
                 name={user.name}
                 idOrder = {order.idOrder}
                 products={order.products}
                 total={order.total}
               />
-            ))}
-          </div>
-        );
-      })
+           )
+            }) 
     ) : (
       <p>Cargando   </p>
     )}
   </div>
-  )
-}
+  );
+  
+      }
